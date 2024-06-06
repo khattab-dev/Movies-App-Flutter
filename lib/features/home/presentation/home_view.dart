@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/home/data/models/movies_dto.dart';
 import 'package:flutter_application_2/features/home/domain/repo/moveis_repository.dart';
 import 'package:flutter_application_2/features/home/presentation/cubit/home_cubit.dart';
+import 'package:flutter_application_2/features/home/presentation/movie_details_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -27,19 +29,21 @@ class HomeViewBody extends StatelessWidget {
     return BlocProvider(
       create: (context) {
         final cubit = HomeCubit(GetIt.I.get<Moviesrepository>());
+
         _pagingController.addPageRequestListener((pageKey) {
           cubit.fetchMovies(pageKey);
         });
+
         return cubit;
       },
       child: BlocConsumer<HomeCubit, HomeState>(
         builder: (context, state) {
           return PagedGridView<int, Results>(
+              padding: const EdgeInsets.all(8),
               pagingController: _pagingController,
               builderDelegate: PagedChildBuilderDelegate(
-                  itemBuilder: (context, item, index) => MovieCard(
-                      posterUrl:
-                          "https://image.tmdb.org/t/p/w500/${item.posterPath}")),
+                  itemBuilder: (context, item, index) =>
+                      MovieCard(movie: item)),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
                 mainAxisSpacing: 8.0,
@@ -67,20 +71,23 @@ class HomeViewBody extends StatelessWidget {
 }
 
 class MovieCard extends StatelessWidget {
-  final String posterUrl;
+  final Results movie;
 
-  const MovieCard({super.key, required this.posterUrl});
+  const MovieCard({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: CachedNetworkImage(
-        imageUrl: posterUrl,
-        fit: BoxFit.fill,
-        placeholder: (context, url) =>
-            const Center(child: CircularProgressIndicator()),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+    return GestureDetector(
+      onTap: () => Get.to(() => MovieDetailsView(movie: movie)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: CachedNetworkImage(
+          imageUrl: "https://image.tmdb.org/t/p/w500/${movie.posterPath}",
+          fit: BoxFit.fill,
+          placeholder: (context, url) =>
+              const Center(child: CircularProgressIndicator()),
+          errorWidget: (context, url, error) => const Icon(Icons.error),
+        ),
       ),
     );
   }
