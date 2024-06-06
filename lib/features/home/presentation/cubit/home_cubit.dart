@@ -9,9 +9,9 @@ class HomeCubit extends Cubit<HomeState> {
   final Moviesrepository repo;
   HomeCubit(this.repo) : super(HomeStateInitial());
 
-  Future<void> fetchMovies() async {
+  Future<void> fetchMovies(int pageKey) async {
     emit(HomeStateLoading());
-    var result = await repo.fetchMovies();
+    var result = await repo.fetchMovies(pageKey);
     result.fold((failure) {
       emit(HomeStateFailure(failure.errMessage));
     }, (movies) {

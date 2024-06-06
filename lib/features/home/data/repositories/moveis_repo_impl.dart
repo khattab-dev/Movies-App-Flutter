@@ -11,9 +11,10 @@ class MoveisRepoImpl extends Moviesrepository {
   MoveisRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, MoviesDTO>> fetchMovies() async {
+  Future<Either<Failure, MoviesDTO>> fetchMovies(int pageKey) async {
     try {
-      var data = await apiService.get(endPoint: 'discover/movie');
+      var data = await apiService
+          .get(endPoint: 'discover/movie', queryParameters: {"page": pageKey});
       MoviesDTO moviesDTO = MoviesDTO.fromJson(data);
       return right(moviesDTO);
     } catch (e) {

@@ -8,7 +8,9 @@ final class HomeStateInitial extends HomeState {}
 final class HomeStateLoading extends HomeState {}
 
 final class HomeStateFailure extends HomeState {
-  HomeStateFailure(String errMessage);
+  final String errMessage;
+
+  HomeStateFailure(this.errMessage);
 }
 
 final class HomeStateSuccess extends HomeState {

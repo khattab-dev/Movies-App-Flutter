@@ -18,8 +18,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
-      home: SplashView(),
+    return const SafeArea(
+      child: GetMaterialApp(
+        home: SplashView(),
+      ),
     );
   }
 }
